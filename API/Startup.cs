@@ -12,6 +12,10 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 
+using Microsoft.EntityFrameworkCore;
+
+using API.Data;
+
 namespace Net_Api
 {
     public class Startup
@@ -26,8 +30,10 @@ namespace Net_Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+services.AddDbContext<DatabaseContext>(options=>
+    options.UseSqlServer(Configuration.GetConnectionString("sqlConnection"))
+);
 
-            services.AddControllers();
             services.AddCors(o=>{
                 o.AddPolicy("CorsPolicy", builder=>
                     builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()
@@ -37,6 +43,7 @@ namespace Net_Api
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Net_Api", Version = "v1" });
             });
+             services.AddControllers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
